@@ -1,9 +1,9 @@
 <template>
-  <div>home</div>
+  <EchartMap></EchartMap>
 </template>
 
 <script setup lang="ts">
-
-  </script>
+import EchartMap from "@/components/echart-map.vue";
+</script>
 
 <style scoped></style>
