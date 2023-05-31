@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <EchartMap></EchartMap>
-  </div>
+  <EchartMap></EchartMap>
 </template>
 
 <script setup lang="ts">

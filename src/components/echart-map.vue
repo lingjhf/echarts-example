@@ -1,5 +1,5 @@
 <template>
-  <div id="echarts-map" ref="mapRef" class="h-200px w-200px"></div>
+  <div id="echarts-map" ref="mapRef" class="h-300px w-300px"></div>
 </template>
 
 <script setup lang="ts">
@@ -7,56 +7,32 @@ import { onMounted, shallowRef } from "vue";
 import * as echarts from "echarts/core";
 import { CanvasRenderer } from "echarts/renderers";
 import { MapChart } from "echarts/charts";
-import {
-  TitleComponent,
-  TooltipComponent,
-  GridComponent,
-  DatasetComponent,
-  TransformComponent,
-} from "echarts/components";
-import { LabelLayout, UniversalTransition } from "echarts/features";
-import type { MapSeriesOption } from "echarts/charts";
-import type { ComposeOption } from "echarts/core";
+
 import guangdong from "@/data/guangdong.json";
-import type { FeatureCollection } from "geojson";
+import { polylineStringToGeoJSON } from "./utils";
 
-function transformPolylineStringToGeoJson(polyline: string): FeatureCollection {
-
-  return {
-    type: "FeatureCollection",
-    features: [
-      {
-        type: "Feature",
-        properties: [],
-        geometry: { type: "", coordinates: [] },
-      },
-    ],
-  };
-}
-
-type Options = ComposeOption<MapSeriesOption>;
+echarts.use([MapChart, CanvasRenderer]);
 
 const mapRef = shallowRef<HTMLDivElement>();
-echarts.use([
-  MapChart,
-  TitleComponent,
-  TooltipComponent,
-  GridComponent,
-  DatasetComponent,
-  TransformComponent,
-  LabelLayout,
-  UniversalTransition,
-  CanvasRenderer,
-]);
+const guangdongGeoJSON = polylineStringToGeoJSON(guangdong.polyline);
+console.log(guangdongGeoJSON);
+echarts.registerMap("china", guangdongGeoJSON as any);
 onMounted(() => {
-  if (mapRef.value) {
-    const json = transformPolylineStringToGeoJson(guangdong.polyline);
-
-    echarts.registerMap("china", json as any);
-    const echart = echarts.init(mapRef.value);
-
-    const options: Options = {};
-    echart.setOption(options);
-  }
+  const echart = echarts.init(mapRef.value!);
+  echart.setOption({
+    series: [
+      {
+        name: "USA PopEstimates",
+        type: "map",
+        roam: true,
+        map: "china",
+        emphasis: {
+          label: {
+            show: true,
+          },
+        },
+      },
+    ],
+  });
 });
 </script>
